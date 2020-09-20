@@ -1,0 +1,28 @@
+name: Deploy RBAC ARM Template
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - ".github/workflows/deployRBAC.yml"
+      - "deployRBAC.json"
+
+jobs:
+  deploy-rbac-template:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@master
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+
+      - name: Deploy ARM Template
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az deployment group create --resource-group myRBAC_RG --template-file ./azuredeploy.json
